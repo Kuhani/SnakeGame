@@ -1,5 +1,7 @@
 #include <iostream>
 #include <conio.h>
+#include <time.h>
+#include <math.h>
 #ifdef __unix__
 # include <unistd.h>
 #elif defined _WIN32
@@ -97,6 +99,8 @@ void mapdraw()
 	}
 	cout << endl;
 	cout << "Score:" << score << endl;
+	cout << "Press X to close the game" << endl;
+	cout << "Press R to restart the game" << endl;
 }
 void input()
 {
@@ -115,6 +119,17 @@ void input()
 			break;
 		case'd':
 			dir = RIGHT;
+			break;
+		case'x':
+			gameover = true;
+			break;
+		case'r':
+			score = 0;
+			tail = 0;
+			x = width / 2;
+			y = height / 2;
+			fruitx = rand() % width;
+			fruity = rand() % height;
 			break;
 		}
 	}
@@ -155,9 +170,28 @@ void controls()
 		break;
 	}
 	//if snake touches the border
-	if (x > width || x<0 || y>height || y < 0)
+	/*
+	if (x > width || x < 0 || y > height || y < 0)
 	{
 		gameover = true;
+	}
+	*/
+	// snake can go through walls
+	if (x > width)
+	{
+		x = 0;
+	}
+	else if (x < 0)
+	{
+		x = width;
+	}
+	if (y > height)
+	{
+		y = 0;
+	}
+	else if (y < 0)
+	{
+		y = height;
 	}
 	//if you touch the tail
 	for (int i = 0; i < tail; i++)
@@ -175,14 +209,24 @@ void controls()
 		fruity = rand() % height;
 		tail++;
 	}
-	//slow down
+	//speed up/down
 	if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN)
 	{
+		
+		if(speed-(8*score)>0)
+		{
+			Sleep(speed - (2 * score));
+		}
+		else
+		{
+			Sleep(10);
+		}
 		Sleep(80);
 	}
 }
 int main()
 {
+	srand(time(NULL));
 	infosetup();
 	while (!gameover)
 	{
